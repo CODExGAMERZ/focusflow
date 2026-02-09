@@ -1,52 +1,95 @@
 const taskInput = document.getElementById("taskInput");
 const addTaskBtn = document.getElementById("addTaskBtn");
 const taskList = document.getElementById("taskList");
+const themeToggle = document.getElementById("themeToggle");
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-// Render tasks on screen
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("light");
+});
+
+// Render tasks
 function renderTasks() {
   taskList.innerHTML = "";
 
   tasks.forEach((task, index) => {
     const li = document.createElement("li");
-    li.textContent = task;
+
+    const span = document.createElement("span");
+    span.textContent = task.text;
+
+    if (task.completed) {
+      span.classList.add("completed");
+    }
+
+    span.addEventListener("click", () => {
+      task.completed = !task.completed;
+      saveTasks();
+    });
 
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "❌";
-
     deleteBtn.addEventListener("click", () => {
       tasks.splice(index, 1);
       saveTasks();
     });
 
+    li.appendChild(span);
     li.appendChild(deleteBtn);
     taskList.appendChild(li);
   });
 }
 
-// Save tasks to localStorage
 function saveTasks() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   renderTasks();
 }
 
-// Add task event
 addTaskBtn.addEventListener("click", () => {
-  const task = taskInput.value.trim();
+  const text = taskInput.value.trim();
+  if (!text) return;
 
-  if (task === "") return;
-
-  tasks.push(task);
+  tasks.push({ text, completed: false });
   taskInput.value = "";
   saveTasks();
 });
 
-// Initial render
 renderTasks();
 
-// Load tasks from localStorage on page load
-window.addEventListener("load", () => {
-  tasks = JSON.parse(localStorage.getItem("tasks")) || [];
-  renderTasks();
+taskInput.addEventListener("keydown", (e) => {
+  if (e.key === "Enter") {
+    addTaskBtn.click();
+  }
 });
+
+let time = 25 * 60;
+let interval = null;
+
+const timerDisplay = document.getElementById("timer");
+const startTimer = document.getElementById("startTimer");
+
+function updateTimer() {
+  const minutes = String(Math.floor(time / 60)).padStart(2, "0");
+  const seconds = String(time % 60).padStart(2, "0");
+  timerDisplay.textContent = `${minutes}:${seconds}`;
+}
+
+startTimer.addEventListener("click", () => {
+  if (interval) return;
+
+  interval = setInterval(() => {
+    time--;
+    updateTimer();
+
+    if (time === 0) {
+      clearInterval(interval);
+      alert("Pomodoro complete! Take a break ☕");
+      interval = null;
+      time = 25 * 60;
+      updateTimer();
+    }
+  }, 1000);
+});
+
+updateTimer();

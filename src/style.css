@@ -1,3 +1,30 @@
+:root {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #e5e7eb;
+}
+
+body {
+  background-color: var(--bg);
+  color: var(--text);
+}
+
+.app {
+  background-color: var(--card);
+}
+
+.light {
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --text: #020617;
+}
+
+.dark {
+  --bg: #0f172a;
+  --card: #1e293b;
+  --text: #e5e7eb;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -81,4 +108,20 @@ li button {
   border: none;
   cursor: pointer;
   font-size: 16px;
+}
+
+.completed {
+  text-decoration: line-through;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.pomodoro {
+  margin-top: 20px;
+  text-align: center;
+}
+
+#timer {
+  font-size: 2rem;
+  margin: 10px 0;
 }
