@@ -8,19 +8,50 @@
 </head>
 <body>
 
-  <div class="app">
-    <h1>FocusFlow</h1>
-    <button id="themeToggle" class="theme-toggle">🌙 Toggle Theme</button>
-    <p class="tagline">Stay focused. Get things done.</p>
+  <main class="app" role="application" aria-label="FocusFlow Productivity App">
+    <h1 tabindex="0">FocusFlow</h1>
 
-    <div class="task-input">
-      <input type="text" id="taskInput" placeholder="Task name..." />
-      <input type="number" id="taskTime" placeholder="Min" min="1" />
-      <button id="addTaskBtn">Add</button>
-    </div>
+    <button
+      id="themeToggle"
+      class="theme-toggle"
+      aria-label="Toggle dark or light theme"
+    >
+      🌙 Toggle Theme
+    </button>
 
-    <ul id="taskList"></ul>
-  </div>
+    <p class="tagline" id="app-desc">
+      Stay focused. Get things done.
+    </p>
+
+    <section class="task-input" aria-labelledby="add-task">
+      <input
+        type="text"
+        id="taskInput"
+        placeholder="Task name"
+        aria-label="Task name"
+      />
+
+      <input
+        type="number"
+        id="taskTime"
+        placeholder="Minutes"
+        min="1"
+        inputmode="numeric"
+        aria-label="Task duration in minutes"
+      />
+
+      <button id="addTaskBtn" aria-label="Add task">
+        Add
+      </button>
+    </section>
+
+    <ul
+      id="taskList"
+      role="list"
+      aria-live="polite"
+      aria-label="Task list"
+    ></ul>
+  </main>
 
   <script src="app.js"></script>
 </body>
