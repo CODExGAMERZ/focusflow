@@ -1,6 +1,3 @@
-/* =====================
-   DOM ELEMENTS
-===================== */
 const taskInput = document.getElementById("taskInput");
 const taskTimeInput = document.getElementById("taskTime");
 const addTaskBtn = document.getElementById("addTaskBtn");
@@ -12,9 +9,6 @@ const totalFocusEl = document.getElementById("totalFocus");
 const topTaskTodayEl = document.getElementById("topTaskToday");
 const topTaskEl = document.getElementById("topTask");
 
-/* =====================
-   STATE
-===================== */
 const todayKey = new Date().toDateString();
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || {};
@@ -22,25 +16,23 @@ let analytics = JSON.parse(localStorage.getItem("analytics")) || {
   total: 0,
   daily: {}
 };
+
 let intervals = {};
 
-/* =====================
-   HELPERS
-===================== */
+/* ---------- Helpers ---------- */
 function formatTime(sec) {
   const m = String(Math.floor(sec / 60)).padStart(2, "0");
   const s = String(sec % 60).padStart(2, "0");
   return `${m}:${s}`;
 }
 
-/* =====================
-   RENDER UI
-===================== */
+/* ---------- Render (ONCE per change) ---------- */
 function render() {
   taskList.innerHTML = "";
 
   Object.entries(tasks).forEach(([id, t]) => {
     const li = document.createElement("li");
+    li.dataset.id = id;
 
     li.innerHTML = `
       <div class="task-header">
@@ -49,9 +41,7 @@ function render() {
       </div>
 
       <div class="progress">
-        <div class="progress-bar"
-             style="width:${100 - (t.remaining / t.duration) * 100}%">
-        </div>
+        <div class="progress-bar"></div>
       </div>
 
       <div class="task-controls">
@@ -61,33 +51,50 @@ function render() {
       </div>
     `;
 
-    const [startBtn, resetBtn, deleteBtn] =
+    const [startBtn, resetBtn, delBtn] =
       li.querySelectorAll(".task-controls button");
 
     startBtn.onclick = () => toggleTimer(id);
     resetBtn.onclick = () => resetTask(id);
-    deleteBtn.onclick = () => deleteTask(id);
+    delBtn.onclick = () => deleteTask(id);
 
     taskList.appendChild(li);
+
+    updateTaskUI(id); // initial paint
   });
 
   renderAnalytics();
 }
 
-/* =====================
-   TIMER LOGIC (FIXED)
-===================== */
+/* ---------- UI UPDATE (FAST, NO REBUILD) ---------- */
+function updateTaskUI(id) {
+  const task = tasks[id];
+  const li = taskList.querySelector(`li[data-id="${id}"]`);
+  if (!li) return;
+
+  const timeEl = li.querySelector(".task-time");
+  const bar = li.querySelector(".progress-bar");
+  const startBtn = li.querySelector(".task-controls button");
+
+  timeEl.textContent = formatTime(task.remaining);
+  bar.style.width = `${100 - (task.remaining / task.duration) * 100}%`;
+  startBtn.textContent = task.running ? "Pause" : "Start";
+}
+
+/* ---------- Timer Logic (NO RE-RENDER) ---------- */
 function toggleTimer(id) {
   const t = tasks[id];
 
   if (t.running) {
     clearInterval(intervals[id]);
     t.running = false;
-    save();
+    save(false);
+    updateTaskUI(id);
     return;
   }
 
   t.running = true;
+  updateTaskUI(id);
 
   intervals[id] = setInterval(() => {
     t.remaining--;
@@ -103,17 +110,17 @@ function toggleTimer(id) {
       t.running = false;
     }
 
-    save(); // 🔥 IMPORTANT: re-render every second
+    updateTaskUI(id);
+    save(false); // save WITHOUT re-render
   }, 1000);
-
-  save();
 }
 
 function resetTask(id) {
   clearInterval(intervals[id]);
   tasks[id].remaining = tasks[id].duration;
   tasks[id].running = false;
-  save();
+  save(false);
+  updateTaskUI(id);
 }
 
 function deleteTask(id) {
@@ -122,9 +129,7 @@ function deleteTask(id) {
   save();
 }
 
-/* =====================
-   ANALYTICS
-===================== */
+/* ---------- Analytics ---------- */
 function renderAnalytics() {
   const todayData = analytics.daily[todayKey] || {};
 
@@ -141,22 +146,17 @@ function renderAnalytics() {
     Object.values(tasks).sort((a, b) => b.spent - a.spent)[0]?.text || "—";
 }
 
-/* =====================
-   STORAGE
-===================== */
-function save() {
+/* ---------- Storage ---------- */
+function save(renderUI = true) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("analytics", JSON.stringify(analytics));
-  render();
+  if (renderUI) render();
 }
 
-/* =====================
-   ADD TASK
-===================== */
+/* ---------- Add Task ---------- */
 addTaskBtn.onclick = () => {
   const text = taskInput.value.trim();
   const min = parseInt(taskTimeInput.value);
-
   if (!text || !min) return;
 
   const id = Date.now().toString();
@@ -175,9 +175,7 @@ addTaskBtn.onclick = () => {
   save();
 };
 
-/* =====================
-   THEME
-===================== */
+/* ---------- Theme ---------- */
 if (localStorage.getItem("theme") === "light") {
   document.body.classList.add("light");
 }
@@ -190,7 +188,5 @@ themeToggle.onclick = () => {
   );
 };
 
-/* =====================
-   INIT
-===================== */
+/* ---------- Init ---------- */
 render();
