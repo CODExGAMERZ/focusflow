@@ -89,9 +89,7 @@ function toggleTimer(id) {
   t.running = true;
   tick(id);
 
-  intervals[id] = setInterval(() => {
-    tick(id);
-  }, 1000);
+  intervals[id] = setInterval(() => tick(id), 1000);
 
   save();
   updateTaskUI(id);
