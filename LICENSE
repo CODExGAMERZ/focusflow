@@ -1,96 +1,21 @@
-# 🚀 FocusFlow – Personal Productivity App
+MIT License
 
-![GitHub stars](https://img.shields.io/github/stars/CODExGAMERZ/focusflow?style=flat-square)
-![GitHub forks](https://img.shields.io/github/forks/CODExGAMERZ/focusflow?style=flat-square)
-![License](https://img.shields.io/github/license/CODExGAMERZ/focusflow?style=flat-square)
+Copyright (c) 2026 Aryan Sinha
 
-FocusFlow is a clean and minimal personal productivity web app designed to help users manage tasks, stay focused, and improve daily efficiency.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
----
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-## ✨ Features
-
-* ➕ Add and delete tasks
-* ✔️ Mark tasks as completed
-* 💾 Persistent storage using LocalStorage
-* 🌙 Dark / Light mode toggle (saved automatically)
-* ⏱️ Built-in Pomodoro timer
-* 🎨 Clean, minimal UI
-
----
-
-## 🛠️ Tech Stack
-
-* **HTML5** – Semantic structure
-* **CSS3** – Styling and theming
-* **Vanilla JavaScript** – Application logic
-* **LocalStorage API** – Data persistence
-
----
-
-## 📂 Project Structure
-
-```
-focusflow/
-├── src/
-│   ├── index.html
-│   ├── style.css
-│   └── app.js
-├── assets/
-│   └── icons/
-├── README.md
-├── .gitignore
-└── LICENSE
-```
-
----
-
-## 🚀 Getting Started
-
-1. Clone the repository
-
-   ```bash
-   git clone https://github.com/CODExGAMERZ/focusflow.git
-   ```
-
-2. Navigate to the project folder
-
-   ```bash
-   cd focusflow
-   ```
-
-3. Open the app
-
-   * Open `src/index.html` in your browser
-
----
-
-## 💼 Resume Highlights
-
-* Built a full-featured productivity web application using **HTML, CSS, and Vanilla JavaScript**
-* Implemented **LocalStorage-based persistence** for tasks and user preferences
-* Designed and developed a **dark/light theme system** with state saving
-* Integrated a functional **Pomodoro timer** to enhance focus and productivity
-* Followed clean Git workflows with structured commits and documentation
-
----
-
-## 🔮 Future Improvements
-
-* 📱 Mobile-first responsive layout
-* ☁️ Cloud sync using Firebase
-* 📝 Notes and reminders section
-* 🔔 Notifications for Pomodoro sessions
-
----
-
-## 📜 License
-
-This project is licensed under the **MIT License**.
-
----
-
-## 👤 Author
-
-**Aryan Sinha**
-GitHub: [https://github.com/CODExGAMERZ](https://github.com/CODExGAMERZ)
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
