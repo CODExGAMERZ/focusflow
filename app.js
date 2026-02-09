@@ -2,6 +2,7 @@ const taskInput = document.getElementById("taskInput");
 const taskTimeInput = document.getElementById("taskTime");
 const addTaskBtn = document.getElementById("addTaskBtn");
 const taskList = document.getElementById("taskList");
+const themeToggle = document.getElementById("themeToggle");
 
 const todayFocusEl = document.getElementById("todayFocus");
 const totalFocusEl = document.getElementById("totalFocus");
@@ -55,10 +56,10 @@ function createTaskElement(id, task) {
   taskList.appendChild(li);
 
   taskEls[id] = {
+    li,
     time: li.querySelector(".task-time"),
     bar: li.querySelector(".progress-bar"),
-    startBtn,
-    li
+    startBtn
   };
 
   updateTaskUI(id);
@@ -116,7 +117,6 @@ function tick(id) {
 
   updateTaskUI(id);
   updateAnalyticsUI();
-  save(false);
 }
 
 function resetTask(id) {
@@ -152,10 +152,9 @@ function updateAnalyticsUI() {
     Object.values(tasks).sort((a, b) => b.spent - a.spent)[0]?.text || "—";
 }
 
-function save(render = true) {
+function save() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("analytics", JSON.stringify(analytics));
-  if (render) updateAnalyticsUI();
 }
 
 addTaskBtn.onclick = () => {
@@ -179,6 +178,18 @@ addTaskBtn.onclick = () => {
 
   taskInput.value = "";
   taskTimeInput.value = "";
+};
+
+if (localStorage.getItem("theme") === "light") {
+  document.body.classList.add("light");
+}
+
+themeToggle.onclick = () => {
+  document.body.classList.toggle("light");
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("light") ? "light" : "dark"
+  );
 };
 
 Object.entries(tasks).forEach(([id, task]) => {

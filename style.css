@@ -9,13 +9,14 @@
   --radius: 14px;
 }
 
-.light {
+body.light {
   --bg: #f1f5f9;
   --card: #ffffff;
   --surface: #f8fafc;
   --text: #020617;
   --muted: #475569;
 }
+
 
 * {
   box-sizing: border-box;
