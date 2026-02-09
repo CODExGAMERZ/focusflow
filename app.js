@@ -1,3 +1,6 @@
+/* =====================
+   DOM ELEMENTS
+===================== */
 const taskInput = document.getElementById("taskInput");
 const taskTimeInput = document.getElementById("taskTime");
 const addTaskBtn = document.getElementById("addTaskBtn");
@@ -9,6 +12,9 @@ const totalFocusEl = document.getElementById("totalFocus");
 const topTaskTodayEl = document.getElementById("topTaskToday");
 const topTaskEl = document.getElementById("topTask");
 
+/* =====================
+   STATE
+===================== */
 const todayKey = new Date().toDateString();
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || {};
@@ -28,7 +34,7 @@ function formatTime(sec) {
 }
 
 /* =====================
-   RENDER
+   RENDER UI
 ===================== */
 function render() {
   taskList.innerHTML = "";
@@ -43,7 +49,9 @@ function render() {
       </div>
 
       <div class="progress">
-        <div class="progress-bar" style="width:${100 - (t.remaining / t.duration) * 100}%"></div>
+        <div class="progress-bar"
+             style="width:${100 - (t.remaining / t.duration) * 100}%">
+        </div>
       </div>
 
       <div class="task-controls">
@@ -53,11 +61,12 @@ function render() {
       </div>
     `;
 
-    const [startBtn, resetBtn, delBtn] = li.querySelectorAll("button");
+    const [startBtn, resetBtn, deleteBtn] =
+      li.querySelectorAll(".task-controls button");
 
     startBtn.onclick = () => toggleTimer(id);
     resetBtn.onclick = () => resetTask(id);
-    delBtn.onclick = () => deleteTask(id);
+    deleteBtn.onclick = () => deleteTask(id);
 
     taskList.appendChild(li);
   });
@@ -66,7 +75,7 @@ function render() {
 }
 
 /* =====================
-   TIMER LOGIC
+   TIMER LOGIC (FIXED)
 ===================== */
 function toggleTimer(id) {
   const t = tasks[id];
@@ -74,34 +83,36 @@ function toggleTimer(id) {
   if (t.running) {
     clearInterval(intervals[id]);
     t.running = false;
-  } else {
-    t.running = true;
-    intervals[id] = setInterval(() => {
-      t.remaining--;
-      t.spent++;
-      analytics.total++;
-
-      analytics.daily[todayKey] ??= {};
-      analytics.daily[todayKey][t.text] =
-        (analytics.daily[todayKey][t.text] || 0) + 1;
-
-      if (t.remaining <= 0) {
-        clearInterval(intervals[id]);
-        t.running = false;
-      }
-
-      save(false);
-    }, 1000);
+    save();
+    return;
   }
+
+  t.running = true;
+
+  intervals[id] = setInterval(() => {
+    t.remaining--;
+    t.spent++;
+    analytics.total++;
+
+    analytics.daily[todayKey] ??= {};
+    analytics.daily[todayKey][t.text] =
+      (analytics.daily[todayKey][t.text] || 0) + 1;
+
+    if (t.remaining <= 0) {
+      clearInterval(intervals[id]);
+      t.running = false;
+    }
+
+    save(); // 🔥 IMPORTANT: re-render every second
+  }, 1000);
 
   save();
 }
 
 function resetTask(id) {
-  const t = tasks[id];
   clearInterval(intervals[id]);
-  t.remaining = t.duration;
-  t.running = false;
+  tasks[id].remaining = tasks[id].duration;
+  tasks[id].running = false;
   save();
 }
 
@@ -116,6 +127,7 @@ function deleteTask(id) {
 ===================== */
 function renderAnalytics() {
   const todayData = analytics.daily[todayKey] || {};
+
   todayFocusEl.textContent = formatTime(
     Object.values(todayData).reduce((a, b) => a + b, 0)
   );
@@ -132,10 +144,10 @@ function renderAnalytics() {
 /* =====================
    STORAGE
 ===================== */
-function save(renderUI = true) {
+function save() {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("analytics", JSON.stringify(analytics));
-  if (renderUI) render();
+  render();
 }
 
 /* =====================
@@ -147,7 +159,9 @@ addTaskBtn.onclick = () => {
 
   if (!text || !min) return;
 
-  tasks[Date.now()] = {
+  const id = Date.now().toString();
+
+  tasks[id] = {
     text,
     duration: min * 60,
     remaining: min * 60,
@@ -176,4 +190,7 @@ themeToggle.onclick = () => {
   );
 };
 
+/* =====================
+   INIT
+===================== */
 render();
