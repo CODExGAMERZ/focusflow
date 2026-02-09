@@ -8,9 +8,15 @@
 </head>
 <body>
 
-  <main class="app" role="application" aria-label="FocusFlow Productivity App">
+  <main
+    class="app"
+    role="application"
+    aria-label="FocusFlow Productivity Application"
+  >
+    <!-- App Title -->
     <h1 tabindex="0">FocusFlow</h1>
 
+    <!-- Theme Toggle -->
     <button
       id="themeToggle"
       class="theme-toggle"
@@ -19,11 +25,16 @@
       🌙 Toggle Theme
     </button>
 
+    <!-- Tagline -->
     <p class="tagline" id="app-desc">
       Stay focused. Get things done.
     </p>
 
-    <section class="task-input" aria-labelledby="add-task">
+    <!-- Task Input Section -->
+    <section
+      class="task-input"
+      aria-labelledby="add-task-title"
+    >
       <input
         type="text"
         id="taskInput"
@@ -40,17 +51,39 @@
         aria-label="Task duration in minutes"
       />
 
-      <button id="addTaskBtn" aria-label="Add task">
+      <button
+        id="addTaskBtn"
+        aria-label="Add task"
+      >
         Add
       </button>
     </section>
 
+    <!-- Task List -->
     <ul
       id="taskList"
       role="list"
       aria-live="polite"
       aria-label="Task list"
     ></ul>
+
+    <!-- Analytics Section -->
+    <section
+      class="analytics"
+      aria-labelledby="analytics-title"
+    >
+      <h2 id="analytics-title">📊 Focus Analytics</h2>
+
+      <p>
+        <strong>Total Focus Time:</strong>
+        <span id="totalFocus">0m</span>
+      </p>
+
+      <p>
+        <strong>Top Focus Task:</strong>
+        <span id="topTask">—</span>
+      </p>
+    </section>
   </main>
 
   <script src="app.js"></script>

@@ -130,7 +130,24 @@ li {
   font-size: 0.75rem;
   cursor: pointer;
 }
+
 .task-controls button:hover {
   background: var(--accent);
   color: #020617;
+}
+
+.analytics {
+  margin-top: 20px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+  font-size: 0.85rem;
+}
+
+.analytics h2 {
+  font-size: 1rem;
+  margin-bottom: 6px;
+}
+
+.analytics p {
+  margin: 4px 0;
 }

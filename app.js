@@ -4,15 +4,23 @@ const addTaskBtn = document.getElementById("addTaskBtn");
 const taskList = document.getElementById("taskList");
 const themeToggle = document.getElementById("themeToggle");
 
+const totalFocusEl = document.getElementById("totalFocus");
+const topTaskEl = document.getElementById("topTask");
+
 let tasks = JSON.parse(localStorage.getItem("tasks")) || {};
+let analytics = JSON.parse(localStorage.getItem("analytics")) || {
+  totalFocus: 0,
+  sessions: 0
+};
 let intervals = {};
 
+/* ---------- Utilities ---------- */
 function format(sec) {
-  const m = String(Math.floor(sec / 60)).padStart(2, "0");
-  const s = String(sec % 60).padStart(2, "0");
-  return `${m}:${s}`;
+  const m = Math.floor(sec / 60);
+  return `${m}m`;
 }
 
+/* ---------- Render ---------- */
 function render() {
   taskList.innerHTML = "";
 
@@ -26,7 +34,6 @@ function render() {
     name.textContent = t.text;
     name.tabIndex = 0;
     if (t.completed) name.classList.add("completed");
-
     name.onclick = () => {
       t.completed = !t.completed;
       save();
@@ -73,20 +80,29 @@ function render() {
     li.append(header, progress, controls);
     taskList.append(li);
   });
+
+  renderAnalytics();
 }
 
+/* ---------- Timer Logic ---------- */
 function toggle(id) {
   const t = tasks[id];
+
   if (t.running) {
     stop(id);
   } else {
     t.running = true;
     intervals[id] = setInterval(() => {
       t.remaining--;
+      t.spent++;
+      analytics.totalFocus++;
+
       if (t.remaining <= 0) {
         stop(id);
+        analytics.sessions++;
         alert(`"${t.text}" completed 🎉`);
       }
+
       save(false);
     }, 1000);
   }
@@ -99,14 +115,35 @@ function stop(id) {
   if (tasks[id]) tasks[id].running = false;
 }
 
+/* ---------- Analytics ---------- */
+function renderAnalytics() {
+  totalFocusEl.textContent = format(analytics.totalFocus);
+
+  let top = "—";
+  let max = 0;
+
+  Object.values(tasks).forEach(t => {
+    if (t.spent > max) {
+      max = t.spent;
+      top = t.text;
+    }
+  });
+
+  topTaskEl.textContent = top;
+}
+
+/* ---------- Storage ---------- */
 function save(renderUI = true) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
+  localStorage.setItem("analytics", JSON.stringify(analytics));
   if (renderUI) render();
 }
 
+/* ---------- Add Task ---------- */
 addTaskBtn.onclick = () => {
   const text = taskInput.value.trim();
   const min = parseInt(taskTimeInput.value);
+
   if (!text || !min) return;
 
   const id = Date.now().toString();
@@ -115,7 +152,8 @@ addTaskBtn.onclick = () => {
     completed: false,
     duration: min * 60,
     remaining: min * 60,
-    running: false
+    running: false,
+    spent: 0
   };
 
   taskInput.value = "";
@@ -123,7 +161,7 @@ addTaskBtn.onclick = () => {
   save();
 };
 
-/* Theme */
+/* ---------- Theme ---------- */
 if (localStorage.getItem("theme") === "light") {
   document.body.classList.add("light");
 }
