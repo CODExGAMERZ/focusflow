@@ -4,20 +4,25 @@ const addTaskBtn = document.getElementById("addTaskBtn");
 const taskList = document.getElementById("taskList");
 const themeToggle = document.getElementById("themeToggle");
 
+const todayFocusEl = document.getElementById("todayFocus");
 const totalFocusEl = document.getElementById("totalFocus");
+const topTaskTodayEl = document.getElementById("topTaskToday");
 const topTaskEl = document.getElementById("topTask");
+const chart = document.getElementById("focusChart");
+
+let today = new Date().toDateString();
+
+let analytics = JSON.parse(localStorage.getItem("analytics")) || {
+  total: 0,
+  daily: {}
+};
 
 let tasks = JSON.parse(localStorage.getItem("tasks")) || {};
-let analytics = JSON.parse(localStorage.getItem("analytics")) || {
-  totalFocus: 0,
-  sessions: 0
-};
 let intervals = {};
 
 /* ---------- Utilities ---------- */
-function format(sec) {
-  const m = Math.floor(sec / 60);
-  return `${m}m`;
+function mins(sec) {
+  return `${Math.floor(sec / 60)}m`;
 }
 
 /* ---------- Render ---------- */
@@ -27,109 +32,106 @@ function render() {
   Object.entries(tasks).forEach(([id, t]) => {
     const li = document.createElement("li");
 
-    const header = document.createElement("div");
-    header.className = "task-header";
+    li.innerHTML = `
+      <div class="task-header">
+        <span class="${t.completed ? "completed" : ""}">${t.text}</span>
+        <span>${mins(t.remaining)}</span>
+      </div>
+      <div class="progress">
+        <div class="progress-bar" style="width:${100 - (t.remaining / t.duration) * 100}%"></div>
+      </div>
+      <div class="task-controls">
+        <button onclick="toggle('${id}')">${t.running ? "Pause" : "Start"}</button>
+        <button onclick="resetTask('${id}')">Reset</button>
+        <button onclick="deleteTask('${id}')">Delete</button>
+      </div>
+    `;
 
-    const name = document.createElement("span");
-    name.textContent = t.text;
-    name.tabIndex = 0;
-    if (t.completed) name.classList.add("completed");
-    name.onclick = () => {
-      t.completed = !t.completed;
-      save();
-    };
-
-    const time = document.createElement("span");
-    time.textContent = format(t.remaining);
-
-    header.append(name, time);
-
-    const progress = document.createElement("div");
-    progress.className = "progress";
-
-    const bar = document.createElement("div");
-    bar.className = "progress-bar";
-    bar.style.width = `${100 - (t.remaining / t.duration) * 100}%`;
-
-    progress.append(bar);
-
-    const controls = document.createElement("div");
-    controls.className = "task-controls";
-
-    const start = document.createElement("button");
-    start.textContent = t.running ? "Pause" : "Start";
-    start.onclick = () => toggle(id);
-
-    const reset = document.createElement("button");
-    reset.textContent = "Reset";
-    reset.onclick = () => {
-      stop(id);
-      t.remaining = t.duration;
-      save();
-    };
-
-    const del = document.createElement("button");
-    del.textContent = "Delete";
-    del.onclick = () => {
-      stop(id);
-      delete tasks[id];
-      save();
-    };
-
-    controls.append(start, reset, del);
-    li.append(header, progress, controls);
-    taskList.append(li);
+    taskList.appendChild(li);
   });
 
   renderAnalytics();
 }
 
-/* ---------- Timer Logic ---------- */
-function toggle(id) {
+/* ---------- Timer ---------- */
+window.toggle = (id) => {
   const t = tasks[id];
 
   if (t.running) {
-    stop(id);
+    clearInterval(intervals[id]);
+    t.running = false;
   } else {
     t.running = true;
     intervals[id] = setInterval(() => {
       t.remaining--;
       t.spent++;
-      analytics.totalFocus++;
+
+      analytics.total++;
+      analytics.daily[today] ??= {};
+      analytics.daily[today][t.text] =
+        (analytics.daily[today][t.text] || 0) + 1;
 
       if (t.remaining <= 0) {
-        stop(id);
-        analytics.sessions++;
-        alert(`"${t.text}" completed 🎉`);
+        clearInterval(intervals[id]);
+        t.running = false;
       }
 
       save(false);
     }, 1000);
   }
-  save();
-}
 
-function stop(id) {
+  save();
+};
+
+window.resetTask = (id) => {
+  tasks[id].remaining = tasks[id].duration;
+  save();
+};
+
+window.deleteTask = (id) => {
   clearInterval(intervals[id]);
-  delete intervals[id];
-  if (tasks[id]) tasks[id].running = false;
-}
+  delete tasks[id];
+  save();
+};
 
 /* ---------- Analytics ---------- */
 function renderAnalytics() {
-  totalFocusEl.textContent = format(analytics.totalFocus);
+  todayFocusEl.textContent = mins(
+    Object.values(analytics.daily[today] || {}).reduce((a, b) => a + b, 0)
+  );
+  totalFocusEl.textContent = mins(analytics.total);
 
-  let top = "—";
-  let max = 0;
+  const todayTasks = analytics.daily[today] || {};
+  topTaskTodayEl.textContent =
+    Object.entries(todayTasks).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
 
-  Object.values(tasks).forEach(t => {
-    if (t.spent > max) {
-      max = t.spent;
-      top = t.text;
-    }
+  topTaskEl.textContent =
+    Object.values(tasks).sort((a, b) => b.spent - a.spent)[0]?.text || "—";
+
+  drawChart(todayTasks);
+}
+
+/* ---------- Chart ---------- */
+function drawChart(data) {
+  chart.innerHTML = "";
+  const entries = Object.entries(data);
+  if (!entries.length) return;
+
+  const max = Math.max(...entries.map(e => e[1]));
+  const barWidth = 100 / entries.length;
+
+  entries.forEach(([task, value], i) => {
+    const height = (value / max) * 100;
+
+    chart.innerHTML += `
+      <rect
+        x="${i * barWidth}%"
+        y="${100 - height}%"
+        width="${barWidth - 2}%"
+        height="${height}%"
+      ></rect>
+    `;
   });
-
-  topTaskEl.textContent = top;
 }
 
 /* ---------- Storage ---------- */
@@ -143,17 +145,14 @@ function save(renderUI = true) {
 addTaskBtn.onclick = () => {
   const text = taskInput.value.trim();
   const min = parseInt(taskTimeInput.value);
-
   if (!text || !min) return;
 
-  const id = Date.now().toString();
-  tasks[id] = {
+  tasks[Date.now()] = {
     text,
-    completed: false,
     duration: min * 60,
     remaining: min * 60,
-    running: false,
-    spent: 0
+    spent: 0,
+    running: false
   };
 
   taskInput.value = "";

@@ -8,15 +8,9 @@
 </head>
 <body>
 
-  <main
-    class="app"
-    role="application"
-    aria-label="FocusFlow Productivity Application"
-  >
-    <!-- App Title -->
+  <main class="app" role="application" aria-label="FocusFlow Productivity App">
     <h1 tabindex="0">FocusFlow</h1>
 
-    <!-- Theme Toggle -->
     <button
       id="themeToggle"
       class="theme-toggle"
@@ -25,23 +19,16 @@
       🌙 Toggle Theme
     </button>
 
-    <!-- Tagline -->
-    <p class="tagline" id="app-desc">
-      Stay focused. Get things done.
-    </p>
+    <p class="tagline">Stay focused. Get things done.</p>
 
-    <!-- Task Input Section -->
-    <section
-      class="task-input"
-      aria-labelledby="add-task-title"
-    >
+    <!-- Task Input -->
+    <section class="task-input">
       <input
         type="text"
         id="taskInput"
         placeholder="Task name"
         aria-label="Task name"
       />
-
       <input
         type="number"
         id="taskTime"
@@ -50,39 +37,47 @@
         inputmode="numeric"
         aria-label="Task duration in minutes"
       />
-
-      <button
-        id="addTaskBtn"
-        aria-label="Add task"
-      >
-        Add
-      </button>
+      <button id="addTaskBtn">Add</button>
     </section>
 
-    <!-- Task List -->
-    <ul
-      id="taskList"
-      role="list"
-      aria-live="polite"
-      aria-label="Task list"
-    ></ul>
+    <!-- Tasks -->
+    <ul id="taskList" aria-live="polite"></ul>
 
-    <!-- Analytics Section -->
-    <section
-      class="analytics"
-      aria-labelledby="analytics-title"
-    >
-      <h2 id="analytics-title">📊 Focus Analytics</h2>
+    <!-- Analytics -->
+    <section class="analytics">
+      <h2>📊 Focus Analytics</h2>
 
-      <p>
-        <strong>Total Focus Time:</strong>
-        <span id="totalFocus">0m</span>
-      </p>
+      <div class="stats-grid">
+        <div class="stat">
+          <span>Today</span>
+          <strong id="todayFocus">0m</strong>
+        </div>
 
-      <p>
-        <strong>Top Focus Task:</strong>
-        <span id="topTask">—</span>
-      </p>
+        <div class="stat">
+          <span>All Time</span>
+          <strong id="totalFocus">0m</strong>
+        </div>
+
+        <div class="stat">
+          <span>Top Today</span>
+          <strong id="topTaskToday">—</strong>
+        </div>
+
+        <div class="stat">
+          <span>Top Overall</span>
+          <strong id="topTask">—</strong>
+        </div>
+      </div>
+
+      <!-- Chart -->
+      <h3>📈 Focus Today</h3>
+      <svg
+        id="focusChart"
+        width="100%"
+        height="140"
+        role="img"
+        aria-label="Focus time chart"
+      ></svg>
     </section>
   </main>
 

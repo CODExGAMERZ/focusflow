@@ -151,3 +151,64 @@ li {
 .analytics p {
   margin: 4px 0;
 }
+
+/* =====================
+   ANALYTICS LAYOUT
+===================== */
+
+.analytics {
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
+}
+
+.analytics h2 {
+  margin-bottom: 10px;
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.stat {
+  background: rgba(255,255,255,0.06);
+  padding: 10px;
+  border-radius: 10px;
+  text-align: center;
+}
+
+.stat span {
+  display: block;
+  font-size: 0.75rem;
+  color: var(--muted);
+}
+
+.stat strong {
+  font-size: 1.2rem;
+}
+
+/* =====================
+   SVG CHART
+===================== */
+
+#focusChart rect {
+  fill: var(--accent);
+}
+
+#focusChart text {
+  fill: var(--text);
+  font-size: 10px;
+}
+
+/* =====================
+   MOBILE FIX
+===================== */
+
+@media (max-width: 480px) {
+  .stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
