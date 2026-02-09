@@ -1,0 +1,96 @@
+# 🚀 FocusFlow – Personal Productivity App
+
+![GitHub stars](https://img.shields.io/github/stars/CODExGAMERZ/focusflow?style=flat-square)
+![GitHub forks](https://img.shields.io/github/forks/CODExGAMERZ/focusflow?style=flat-square)
+![License](https://img.shields.io/github/license/CODExGAMERZ/focusflow?style=flat-square)
+
+FocusFlow is a clean and minimal personal productivity web app designed to help users manage tasks, stay focused, and improve daily efficiency.
+
+---
+
+## ✨ Features
+
+* ➕ Add and delete tasks
+* ✔️ Mark tasks as completed
+* 💾 Persistent storage using LocalStorage
+* 🌙 Dark / Light mode toggle (saved automatically)
+* ⏱️ Built-in Pomodoro timer
+* 🎨 Clean, minimal UI
+
+---
+
+## 🛠️ Tech Stack
+
+* **HTML5** – Semantic structure
+* **CSS3** – Styling and theming
+* **Vanilla JavaScript** – Application logic
+* **LocalStorage API** – Data persistence
+
+---
+
+## 📂 Project Structure
+
+```
+focusflow/
+├── src/
+│   ├── index.html
+│   ├── style.css
+│   └── app.js
+├── assets/
+│   └── icons/
+├── README.md
+├── .gitignore
+└── LICENSE
+```
+
+---
+
+## 🚀 Getting Started
+
+1. Clone the repository
+
+   ```bash
+   git clone https://github.com/CODExGAMERZ/focusflow.git
+   ```
+
+2. Navigate to the project folder
+
+   ```bash
+   cd focusflow
+   ```
+
+3. Open the app
+
+   * Open `src/index.html` in your browser
+
+---
+
+## 💼 Resume Highlights
+
+* Built a full-featured productivity web application using **HTML, CSS, and Vanilla JavaScript**
+* Implemented **LocalStorage-based persistence** for tasks and user preferences
+* Designed and developed a **dark/light theme system** with state saving
+* Integrated a functional **Pomodoro timer** to enhance focus and productivity
+* Followed clean Git workflows with structured commits and documentation
+
+---
+
+## 🔮 Future Improvements
+
+* 📱 Mobile-first responsive layout
+* ☁️ Cloud sync using Firebase
+* 📝 Notes and reminders section
+* 🔔 Notifications for Pomodoro sessions
+
+---
+
+## 📜 License
+
+This project is licensed under the **MIT License**.
+
+---
+
+## 👤 Author
+
+**Aryan Sinha**
+GitHub: [https://github.com/CODExGAMERZ](https://github.com/CODExGAMERZ)

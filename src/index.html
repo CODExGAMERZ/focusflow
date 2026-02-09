@@ -10,7 +10,11 @@
 
   <div class="app">
     <h1>FocusFlow</h1>
-    <button id="themeToggle">🌙 Dark Mode</button>
+
+    <button id="themeToggle" class="theme-toggle">
+      🌙 Toggle Theme
+    </button>
+
     <p class="tagline">Stay focused. Get things done.</p>
 
     <div class="task-input">
@@ -23,12 +27,12 @@
     </div>
 
     <ul id="taskList"></ul>
-    <div class="pomodoro">
-  <h3>Pomodoro</h3>
-  <p id="timer">25:00</p>
-  <button id="startTimer">Start</button>
-</div>
 
+    <div class="pomodoro">
+      <h3>Pomodoro Timer</h3>
+      <p id="timer">25:00</p>
+      <button id="startTimer">Start</button>
+    </div>
   </div>
 
   <script src="app.js"></script>

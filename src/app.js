@@ -1,15 +1,19 @@
+// =====================
+// ELEMENTS
+// =====================
 const taskInput = document.getElementById("taskInput");
 const addTaskBtn = document.getElementById("addTaskBtn");
 const taskList = document.getElementById("taskList");
 const themeToggle = document.getElementById("themeToggle");
 
+const timerDisplay = document.getElementById("timer");
+const startTimerBtn = document.getElementById("startTimer");
+
+// =====================
+// TASK LOGIC
+// =====================
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-themeToggle.addEventListener("click", () => {
-  document.body.classList.toggle("light");
-});
-
-// Render tasks
 function renderTasks() {
   taskList.innerHTML = "";
 
@@ -18,10 +22,7 @@ function renderTasks() {
 
     const span = document.createElement("span");
     span.textContent = task.text;
-
-    if (task.completed) {
-      span.classList.add("completed");
-    }
+    if (task.completed) span.classList.add("completed");
 
     span.addEventListener("click", () => {
       task.completed = !task.completed;
@@ -57,17 +58,27 @@ addTaskBtn.addEventListener("click", () => {
 
 renderTasks();
 
-taskInput.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") {
-    addTaskBtn.click();
-  }
+// =====================
+// THEME LOGIC
+// =====================
+const savedTheme = localStorage.getItem("theme");
+if (savedTheme === "light") {
+  document.body.classList.add("light");
+}
+
+themeToggle.addEventListener("click", () => {
+  document.body.classList.toggle("light");
+  localStorage.setItem(
+    "theme",
+    document.body.classList.contains("light") ? "light" : "dark"
+  );
 });
 
+// =====================
+// POMODORO LOGIC
+// =====================
 let time = 25 * 60;
 let interval = null;
-
-const timerDisplay = document.getElementById("timer");
-const startTimer = document.getElementById("startTimer");
 
 function updateTimer() {
   const minutes = String(Math.floor(time / 60)).padStart(2, "0");
@@ -75,7 +86,7 @@ function updateTimer() {
   timerDisplay.textContent = `${minutes}:${seconds}`;
 }
 
-startTimer.addEventListener("click", () => {
+startTimerBtn.addEventListener("click", () => {
   if (interval) return;
 
   interval = setInterval(() => {
@@ -84,8 +95,8 @@ startTimer.addEventListener("click", () => {
 
     if (time === 0) {
       clearInterval(interval);
-      alert("Pomodoro complete! Take a break ☕");
       interval = null;
+      alert("Pomodoro complete! Take a break ☕");
       time = 25 * 60;
       updateTimer();
     }
