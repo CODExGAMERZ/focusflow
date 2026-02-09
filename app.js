@@ -10,43 +10,33 @@ const topTaskEl = document.getElementById("topTask");
 
 const todayKey = new Date().toDateString();
 
-/* =====================
-   STATE
-===================== */
 let tasks = JSON.parse(localStorage.getItem("tasks")) || {};
 let analytics = JSON.parse(localStorage.getItem("analytics")) || {
   total: 0,
   daily: {}
 };
+
 let intervals = {};
 let taskEls = {};
 
-/* =====================
-   HELPERS
-===================== */
 function formatTime(sec) {
   const m = String(Math.floor(sec / 60)).padStart(2, "0");
   const s = String(sec % 60).padStart(2, "0");
   return `${m}:${s}`;
 }
 
-/* =====================
-   CREATE TASK DOM
-===================== */
 function createTaskElement(id, task) {
   const li = document.createElement("li");
   li.dataset.id = id;
 
   li.innerHTML = `
     <div class="task-header">
-      <span class="task-name">${task.text}</span>
+      <span>${task.text}</span>
       <span class="task-time">${formatTime(task.remaining)}</span>
     </div>
-
     <div class="progress">
       <div class="progress-bar"></div>
     </div>
-
     <div class="task-controls">
       <button class="start-btn">${task.running ? "Pause" : "Start"}</button>
       <button class="reset-btn">Reset</button>
@@ -65,32 +55,25 @@ function createTaskElement(id, task) {
   taskList.appendChild(li);
 
   taskEls[id] = {
-    li,
     time: li.querySelector(".task-time"),
     bar: li.querySelector(".progress-bar"),
-    startBtn
+    startBtn,
+    li
   };
 
   updateTaskUI(id);
 }
 
-/* =====================
-   UPDATE UI (NO RE-RENDER)
-===================== */
 function updateTaskUI(id) {
   const t = tasks[id];
   const el = taskEls[id];
   if (!el) return;
 
   el.time.textContent = formatTime(t.remaining);
-  el.bar.style.width =
-    `${100 - (t.remaining / t.duration) * 100}%`;
+  el.bar.style.width = `${100 - (t.remaining / t.duration) * 100}%`;
   el.startBtn.textContent = t.running ? "Pause" : "Start";
 }
 
-/* =====================
-   TIMER LOGIC (STABLE)
-===================== */
 function toggleTimer(id) {
   const t = tasks[id];
 
@@ -103,8 +86,7 @@ function toggleTimer(id) {
   }
 
   t.running = true;
-
-  tick(id); // 🔥 immediate tick
+  tick(id);
 
   intervals[id] = setInterval(() => {
     tick(id);
@@ -154,9 +136,6 @@ function deleteTask(id) {
   save();
 }
 
-/* =====================
-   ANALYTICS UI
-===================== */
 function updateAnalyticsUI() {
   const todayData = analytics.daily[todayKey] || {};
 
@@ -173,18 +152,12 @@ function updateAnalyticsUI() {
     Object.values(tasks).sort((a, b) => b.spent - a.spent)[0]?.text || "—";
 }
 
-/* =====================
-   STORAGE
-===================== */
 function save(render = true) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("analytics", JSON.stringify(analytics));
   if (render) updateAnalyticsUI();
 }
 
-/* =====================
-   ADD TASK
-===================== */
 addTaskBtn.onclick = () => {
   const text = taskInput.value.trim();
   const min = parseInt(taskTimeInput.value);
@@ -208,9 +181,6 @@ addTaskBtn.onclick = () => {
   taskTimeInput.value = "";
 };
 
-/* =====================
-   INIT
-===================== */
 Object.entries(tasks).forEach(([id, task]) => {
   createTaskElement(id, task);
 });
