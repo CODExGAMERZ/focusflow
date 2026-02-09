@@ -8,24 +8,28 @@ const todayFocusEl = document.getElementById("todayFocus");
 const totalFocusEl = document.getElementById("totalFocus");
 const topTaskTodayEl = document.getElementById("topTaskToday");
 const topTaskEl = document.getElementById("topTask");
-const chart = document.getElementById("focusChart");
 
-let today = new Date().toDateString();
+const todayKey = new Date().toDateString();
 
+let tasks = JSON.parse(localStorage.getItem("tasks")) || {};
 let analytics = JSON.parse(localStorage.getItem("analytics")) || {
   total: 0,
   daily: {}
 };
-
-let tasks = JSON.parse(localStorage.getItem("tasks")) || {};
 let intervals = {};
 
-/* ---------- Utilities ---------- */
-function mins(sec) {
-  return `${Math.floor(sec / 60)}m`;
+/* =====================
+   HELPERS
+===================== */
+function formatTime(sec) {
+  const m = String(Math.floor(sec / 60)).padStart(2, "0");
+  const s = String(sec % 60).padStart(2, "0");
+  return `${m}:${s}`;
 }
 
-/* ---------- Render ---------- */
+/* =====================
+   RENDER
+===================== */
 function render() {
   taskList.innerHTML = "";
 
@@ -35,17 +39,25 @@ function render() {
     li.innerHTML = `
       <div class="task-header">
         <span class="${t.completed ? "completed" : ""}">${t.text}</span>
-        <span>${mins(t.remaining)}</span>
+        <span class="task-time">${formatTime(t.remaining)}</span>
       </div>
+
       <div class="progress">
         <div class="progress-bar" style="width:${100 - (t.remaining / t.duration) * 100}%"></div>
       </div>
+
       <div class="task-controls">
-        <button onclick="toggle('${id}')">${t.running ? "Pause" : "Start"}</button>
-        <button onclick="resetTask('${id}')">Reset</button>
-        <button onclick="deleteTask('${id}')">Delete</button>
+        <button>${t.running ? "Pause" : "Start"}</button>
+        <button>Reset</button>
+        <button>Delete</button>
       </div>
     `;
+
+    const [startBtn, resetBtn, delBtn] = li.querySelectorAll("button");
+
+    startBtn.onclick = () => toggleTimer(id);
+    resetBtn.onclick = () => resetTask(id);
+    delBtn.onclick = () => deleteTask(id);
 
     taskList.appendChild(li);
   });
@@ -53,8 +65,10 @@ function render() {
   renderAnalytics();
 }
 
-/* ---------- Timer ---------- */
-window.toggle = (id) => {
+/* =====================
+   TIMER LOGIC
+===================== */
+function toggleTimer(id) {
   const t = tasks[id];
 
   if (t.running) {
@@ -65,11 +79,11 @@ window.toggle = (id) => {
     intervals[id] = setInterval(() => {
       t.remaining--;
       t.spent++;
-
       analytics.total++;
-      analytics.daily[today] ??= {};
-      analytics.daily[today][t.text] =
-        (analytics.daily[today][t.text] || 0) + 1;
+
+      analytics.daily[todayKey] ??= {};
+      analytics.daily[todayKey][t.text] =
+        (analytics.daily[todayKey][t.text] || 0) + 1;
 
       if (t.remaining <= 0) {
         clearInterval(intervals[id]);
@@ -81,70 +95,56 @@ window.toggle = (id) => {
   }
 
   save();
-};
+}
 
-window.resetTask = (id) => {
-  tasks[id].remaining = tasks[id].duration;
+function resetTask(id) {
+  const t = tasks[id];
+  clearInterval(intervals[id]);
+  t.remaining = t.duration;
+  t.running = false;
   save();
-};
+}
 
-window.deleteTask = (id) => {
+function deleteTask(id) {
   clearInterval(intervals[id]);
   delete tasks[id];
   save();
-};
+}
 
-/* ---------- Analytics ---------- */
+/* =====================
+   ANALYTICS
+===================== */
 function renderAnalytics() {
-  todayFocusEl.textContent = mins(
-    Object.values(analytics.daily[today] || {}).reduce((a, b) => a + b, 0)
+  const todayData = analytics.daily[todayKey] || {};
+  todayFocusEl.textContent = formatTime(
+    Object.values(todayData).reduce((a, b) => a + b, 0)
   );
-  totalFocusEl.textContent = mins(analytics.total);
 
-  const todayTasks = analytics.daily[today] || {};
+  totalFocusEl.textContent = formatTime(analytics.total);
+
   topTaskTodayEl.textContent =
-    Object.entries(todayTasks).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
+    Object.entries(todayData).sort((a, b) => b[1] - a[1])[0]?.[0] || "—";
 
   topTaskEl.textContent =
     Object.values(tasks).sort((a, b) => b.spent - a.spent)[0]?.text || "—";
-
-  drawChart(todayTasks);
 }
 
-/* ---------- Chart ---------- */
-function drawChart(data) {
-  chart.innerHTML = "";
-  const entries = Object.entries(data);
-  if (!entries.length) return;
-
-  const max = Math.max(...entries.map(e => e[1]));
-  const barWidth = 100 / entries.length;
-
-  entries.forEach(([task, value], i) => {
-    const height = (value / max) * 100;
-
-    chart.innerHTML += `
-      <rect
-        x="${i * barWidth}%"
-        y="${100 - height}%"
-        width="${barWidth - 2}%"
-        height="${height}%"
-      ></rect>
-    `;
-  });
-}
-
-/* ---------- Storage ---------- */
+/* =====================
+   STORAGE
+===================== */
 function save(renderUI = true) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
   localStorage.setItem("analytics", JSON.stringify(analytics));
   if (renderUI) render();
 }
 
-/* ---------- Add Task ---------- */
+/* =====================
+   ADD TASK
+===================== */
 addTaskBtn.onclick = () => {
   const text = taskInput.value.trim();
   const min = parseInt(taskTimeInput.value);
+
   if (!text || !min) return;
 
   tasks[Date.now()] = {
@@ -152,7 +152,8 @@ addTaskBtn.onclick = () => {
     duration: min * 60,
     remaining: min * 60,
     spent: 0,
-    running: false
+    running: false,
+    completed: false
   };
 
   taskInput.value = "";
@@ -160,7 +161,9 @@ addTaskBtn.onclick = () => {
   save();
 };
 
-/* ---------- Theme ---------- */
+/* =====================
+   THEME
+===================== */
 if (localStorage.getItem("theme") === "light") {
   document.body.classList.add("light");
 }

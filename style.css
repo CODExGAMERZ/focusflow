@@ -1,96 +1,151 @@
+/* =====================
+   DESIGN TOKENS
+===================== */
 :root {
-  --bg: #0f172a;
-  --card: #1e293b;
+  --bg: #0b1220;
+  --card: #1c2638;
+  --surface: #243047;
   --text: #e5e7eb;
   --muted: #94a3b8;
   --accent: #38bdf8;
   --danger: #f87171;
+  --radius: 14px;
 }
 
 .light {
-  --bg: #f8fafc;
+  --bg: #f1f5f9;
   --card: #ffffff;
+  --surface: #f8fafc;
   --text: #020617;
   --muted: #475569;
 }
 
+/* =====================
+   RESET
+===================== */
 * {
   box-sizing: border-box;
-  font-family: system-ui, sans-serif;
+  margin: 0;
+  padding: 0;
+  font-family: system-ui, -apple-system, Segoe UI, sans-serif;
 }
 
 body {
-  background: var(--bg);
+  background: radial-gradient(circle at top, #0f172a, var(--bg));
   color: var(--text);
+  min-height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
-  min-height: 100vh;
 }
 
+/* =====================
+   APP CARD
+===================== */
 .app {
-  background: var(--card);
   width: 100%;
   max-width: 420px;
-  padding: 24px;
-  border-radius: 16px;
-  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  background: var(--card);
+  padding: 26px;
+  border-radius: var(--radius);
+  box-shadow: 0 25px 60px rgba(0,0,0,0.45);
+  animation: scaleIn 0.4s ease;
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 h1 {
   text-align: center;
+  margin-bottom: 6px;
 }
 
 .tagline {
   text-align: center;
+  font-size: 0.85rem;
   color: var(--muted);
-  margin-bottom: 16px;
+  margin-bottom: 18px;
 }
 
-/* Buttons & focus */
-button:focus,
-input:focus {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+/* =====================
+   THEME TOGGLE
+===================== */
+.theme-toggle {
+  display: block;
+  margin: 0 auto 14px;
+  background: var(--surface);
+  color: var(--text);
+  border: 1px solid rgba(255,255,255,0.1);
+  padding: 6px 14px;
+  border-radius: 999px;
+  cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
 }
 
-/* Input */
+.theme-toggle:hover {
+  transform: translateY(-1px);
+  background: rgba(56,189,248,0.15);
+}
+
+/* =====================
+   TASK INPUT
+===================== */
 .task-input {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 90px auto;
   gap: 8px;
   margin-bottom: 16px;
 }
 
-.task-input input,
-.task-input button {
-  padding: 10px;
-  border-radius: 8px;
+.task-input input {
+  padding: 10px 12px;
+  border-radius: 10px;
   border: none;
+  outline: none;
 }
 
 .task-input button {
   background: var(--accent);
+  color: #020617;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 16px;
   font-weight: 600;
+  cursor: pointer;
 }
 
-/* Task list */
+/* =====================
+   TASK LIST
+===================== */
 ul {
   list-style: none;
-  padding: 0;
-  margin: 0;
+  margin-bottom: 16px;
 }
 
 li {
-  background: rgba(255,255,255,0.05);
-  padding: 12px;
-  border-radius: 10px;
+  background: var(--surface);
+  padding: 14px;
+  border-radius: 12px;
   margin-bottom: 10px;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .task-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: 6px;
+}
+
+.task-header span:first-child {
+  font-weight: 500;
 }
 
 .completed {
@@ -98,71 +153,65 @@ li {
   color: var(--muted);
 }
 
-/* Progress bar */
+.task-time {
+  font-weight: 600;
+  color: var(--accent);
+}
+
+/* =====================
+   PROGRESS BAR
+===================== */
 .progress {
   height: 6px;
-  background: rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.08);
   border-radius: 999px;
   overflow: hidden;
-  margin: 6px 0;
+  margin-bottom: 10px;
 }
 
 .progress-bar {
   height: 100%;
-  background: var(--accent);
   width: 0%;
-  transition: width 0.3s linear;
+  background: linear-gradient(90deg, var(--accent), #0ea5e9);
+  transition: width 0.4s linear;
 }
 
-/* Controls */
+/* =====================
+   CONTROLS
+===================== */
 .task-controls {
   display: flex;
   justify-content: space-between;
-  margin-top: 6px;
+  gap: 6px;
 }
 
 .task-controls button {
-  background: none;
-  border: 1px solid var(--accent);
+  flex: 1;
+  background: transparent;
   color: var(--text);
-  padding: 4px 8px;
-  border-radius: 6px;
+  border: 1px solid rgba(255,255,255,0.15);
+  padding: 6px 0;
+  border-radius: 8px;
   font-size: 0.75rem;
   cursor: pointer;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
 }
 
 .task-controls button:hover {
-  background: var(--accent);
-  color: #020617;
+  transform: translateY(-1px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.25);
 }
 
+/* =====================
+   ANALYTICS
+===================== */
 .analytics {
-  margin-top: 20px;
-  padding-top: 12px;
   border-top: 1px solid rgba(255,255,255,0.1);
-  font-size: 0.85rem;
+  padding-top: 14px;
 }
 
 .analytics h2 {
   font-size: 1rem;
-  margin-bottom: 6px;
-}
-
-.analytics p {
-  margin: 4px 0;
-}
-
-/* =====================
-   ANALYTICS LAYOUT
-===================== */
-
-.analytics {
-  margin-top: 22px;
-  padding-top: 14px;
-  border-top: 1px solid rgba(255,255,255,0.1);
-}
-
-.analytics h2 {
   margin-bottom: 10px;
 }
 
@@ -170,11 +219,10 @@ li {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 10px;
-  margin-bottom: 14px;
 }
 
 .stat {
-  background: rgba(255,255,255,0.06);
+  background: var(--surface);
   padding: 10px;
   border-radius: 10px;
   text-align: center;
@@ -182,33 +230,23 @@ li {
 
 .stat span {
   display: block;
-  font-size: 0.75rem;
+  font-size: 0.7rem;
   color: var(--muted);
 }
 
 .stat strong {
-  font-size: 1.2rem;
+  font-size: 1.1rem;
 }
 
 /* =====================
-   SVG CHART
+   RESPONSIVE
 ===================== */
-
-#focusChart rect {
-  fill: var(--accent);
-}
-
-#focusChart text {
-  fill: var(--text);
-  font-size: 10px;
-}
-
-/* =====================
-   MOBILE FIX
-===================== */
-
 @media (max-width: 480px) {
-  .stats-grid {
+  .task-input {
     grid-template-columns: 1fr;
+  }
+
+  .task-controls {
+    flex-direction: column;
   }
 }
