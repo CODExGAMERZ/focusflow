@@ -1,123 +1,152 @@
 /* =====================
-   DOM ELEMENTS
+   ELEMENTS
 ===================== */
 const taskInput = document.getElementById("taskInput");
+const taskTimeInput = document.getElementById("taskTime");
 const addTaskBtn = document.getElementById("addTaskBtn");
 const taskList = document.getElementById("taskList");
 const themeToggle = document.getElementById("themeToggle");
 
-const timerDisplay = document.getElementById("timer");
-const startTimerBtn = document.getElementById("startTimer");
-
 /* =====================
-   TASK STATE
+   STATE
 ===================== */
-let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+let tasks = JSON.parse(localStorage.getItem("tasks")) || {};
+let intervals = {};
 
 /* =====================
-   TASK FUNCTIONS
+   UTIL
+===================== */
+function formatTime(sec) {
+  const m = String(Math.floor(sec / 60)).padStart(2, "0");
+  const s = String(sec % 60).padStart(2, "0");
+  return `${m}:${s}`;
+}
+
+/* =====================
+   RENDER
 ===================== */
 function renderTasks() {
   taskList.innerHTML = "";
 
-  tasks.forEach((task, index) => {
+  Object.entries(tasks).forEach(([id, task]) => {
     const li = document.createElement("li");
 
-    const span = document.createElement("span");
-    span.textContent = task.text;
-
-    if (task.completed) {
-      span.classList.add("completed");
-    }
-
-    span.addEventListener("click", () => {
+    const name = document.createElement("span");
+    name.textContent = task.text;
+    if (task.completed) name.classList.add("completed");
+    name.onclick = () => {
       task.completed = !task.completed;
-      saveTasks();
-    });
+      save();
+    };
 
-    const deleteBtn = document.createElement("button");
-    deleteBtn.textContent = "❌";
-    deleteBtn.title = "Delete task";
+    const timer = document.createElement("span");
+    timer.className = "task-timer";
+    timer.textContent = formatTime(task.remaining);
 
-    deleteBtn.addEventListener("click", () => {
-      tasks.splice(index, 1);
-      saveTasks();
-    });
+    const controls = document.createElement("div");
+    controls.className = "task-controls";
 
-    li.appendChild(span);
-    li.appendChild(deleteBtn);
+    const start = document.createElement("button");
+    start.textContent = task.running ? "Pause" : "Start";
+    start.onclick = () => toggleTimer(id);
+
+    const reset = document.createElement("button");
+    reset.textContent = "Reset";
+    reset.onclick = () => {
+      stopTimer(id);
+      task.remaining = task.duration;
+      save();
+    };
+
+    const del = document.createElement("button");
+    del.textContent = "❌";
+    del.onclick = () => {
+      stopTimer(id);
+      delete tasks[id];
+      save();
+    };
+
+    controls.append(start, reset, del);
+    li.append(name, timer, controls);
     taskList.appendChild(li);
   });
 }
 
-function saveTasks() {
+/* =====================
+   TIMER LOGIC
+===================== */
+function toggleTimer(id) {
+  const task = tasks[id];
+
+  if (task.running) {
+    stopTimer(id);
+  } else {
+    task.running = true;
+    intervals[id] = setInterval(() => {
+      task.remaining--;
+
+      if (task.remaining <= 0) {
+        stopTimer(id);
+        alert(`Task "${task.text}" completed! 🎉`);
+      }
+      save(false);
+    }, 1000);
+  }
+  save();
+}
+
+function stopTimer(id) {
+  clearInterval(intervals[id]);
+  delete intervals[id];
+  if (tasks[id]) tasks[id].running = false;
+}
+
+/* =====================
+   STORAGE
+===================== */
+function save(render = true) {
   localStorage.setItem("tasks", JSON.stringify(tasks));
-  renderTasks();
+  if (render) renderTasks();
 }
 
 /* =====================
    ADD TASK
 ===================== */
-addTaskBtn.addEventListener("click", () => {
+addTaskBtn.onclick = () => {
   const text = taskInput.value.trim();
-  if (!text) return;
+  const min = parseInt(taskTimeInput.value);
 
-  tasks.push({ text, completed: false });
+  if (!text || !min) return;
+
+  const id = Date.now().toString();
+  tasks[id] = {
+    text,
+    completed: false,
+    duration: min * 60,
+    remaining: min * 60,
+    running: false
+  };
+
   taskInput.value = "";
-  saveTasks();
-});
+  taskTimeInput.value = "";
+  save();
+};
 
 /* =====================
-   THEME (DARK / LIGHT)
+   THEME
 ===================== */
 const savedTheme = localStorage.getItem("theme");
-if (savedTheme === "light") {
-  document.body.classList.add("light");
-}
+if (savedTheme === "light") document.body.classList.add("light");
 
-themeToggle.addEventListener("click", () => {
+themeToggle.onclick = () => {
   document.body.classList.toggle("light");
   localStorage.setItem(
     "theme",
     document.body.classList.contains("light") ? "light" : "dark"
   );
-});
+};
 
 /* =====================
-   POMODORO TIMER
+   INIT
 ===================== */
-let time = 25 * 60;
-let interval = null;
-
-function updateTimer() {
-  const minutes = String(Math.floor(time / 60)).padStart(2, "0");
-  const seconds = String(time % 60).padStart(2, "0");
-  timerDisplay.textContent = `${minutes}:${seconds}`;
-}
-
-startTimerBtn.addEventListener("click", () => {
-  if (interval) return;
-
-  timerDisplay.classList.add("running");
-  startTimerBtn.textContent = "Focusing...";
-
-  interval = setInterval(() => {
-    time--;
-    updateTimer();
-
-    if (time === 0) {
-      clearInterval(interval);
-      interval = null;
-
-      alert("Pomodoro complete! Take a break ☕");
-
-      time = 25 * 60;
-      updateTimer();
-      timerDisplay.classList.remove("running");
-      startTimerBtn.textContent = "Start Focus";
-    }
-  }, 1000);
-});
-
-updateTimer();
 renderTasks();

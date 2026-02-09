@@ -10,29 +10,16 @@
 
   <div class="app">
     <h1>FocusFlow</h1>
-
-    <button id="themeToggle" class="theme-toggle">
-      🌙 Toggle Theme
-    </button>
-
+    <button id="themeToggle" class="theme-toggle">🌙 Toggle Theme</button>
     <p class="tagline">Stay focused. Get things done.</p>
 
     <div class="task-input">
-      <input
-        type="text"
-        id="taskInput"
-        placeholder="Add a new task..."
-      />
+      <input type="text" id="taskInput" placeholder="Task name..." />
+      <input type="number" id="taskTime" placeholder="Min" min="1" />
       <button id="addTaskBtn">Add</button>
     </div>
 
     <ul id="taskList"></ul>
-
-    <div class="pomodoro">
-      <h3>Pomodoro Timer</h3>
-      <p id="timer">25:00</p>
-      <button id="startTimer">Start Focus</button>
-    </div>
   </div>
 
   <script src="app.js"></script>
