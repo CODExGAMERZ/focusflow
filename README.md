@@ -10,84 +10,72 @@
 
 ## 📌 Overview
 
-**FocusFlow** is a clean, minimal, and powerful personal productivity web app designed to help users manage tasks and focus effectively.
+**FocusFlow** is a feature-rich personal productivity web app that combines task management with **independent per-task stopwatches**, real-time progress visualization, and productivity analytics.
 
-Unlike basic to-do apps, **each task in FocusFlow has its own independent, customizable timer**, allowing users to track time spent on specific tasks with precision.
+The project was engineered with a strong focus on:
 
-This project emphasizes:
-
-* Strong JavaScript fundamentals
-* Clean state management
-* Practical UI/UX design
-* Real-world deployment experience
+* Precise timer behavior (no freezes, jumps, or delays)
+* Smooth UI animations without re-render jank
+* Scalable state management without frameworks
 
 ---
 
-## ✨ Features
+## ✨ Key Features
 
 ### 📝 Task Management
 
-* Add tasks with a **custom time duration (minutes)**
-* Delete tasks instantly
-* Mark tasks as completed
+* Add multiple tasks with custom time (minutes)
+* Independent stopwatch for every task
+* Start / Pause / Resume / Reset per task
+* Delete tasks anytime
 
-### ⏱️ Per-Task Timers
+### ⏱️ Accurate Timers
 
-* Each task has its **own independent countdown timer**
-* Start, pause, and reset timers individually
-* Multiple timers can exist without interfering with each other
+* **Immediate start** (no 1-second delay)
+* `mm:ss` stopwatch display
+* Smooth progress bar synced with time
+* Timers do not interfere with each other
 
-### 🌙 Theme System
+### 📊 Productivity Analytics
 
-* Dark / Light mode toggle
-* Theme preference is **persisted automatically**
+* Today’s focus time
+* All-time focus time
+* Top task today
+* Top task overall
+* Analytics update live as timers run
+
+### 🎨 UI / UX
+
+* Clean card-based layout
+* Micro-interactions and smooth animations
+* Responsive (mobile + desktop)
+* No animation resets during timer updates
 
 ### 💾 Persistence
 
-* All tasks, timers, and UI state are saved using **LocalStorage**
-* Data remains intact after page refresh or browser restart
-
-### 🎨 UI & UX
-
-* Clean, minimal interface
-* Smooth micro-animations
-* Clear visual hierarchy
-* Distraction-free design
+* Tasks and analytics stored in **LocalStorage**
+* State restored safely on page refresh
 
 ---
 
-## 🧠 How It Works (Architecture)
+## 🧠 Technical Highlights
 
-Each task is stored as an object with the following state:
-
-```js
-{
-  text: "Study Algorithms",
-  completed: false,
-  duration: 1500,
-  remaining: 1200,
-  running: false
-}
-```
-
-### Key Design Decisions
-
-* **Independent timers** managed via controlled intervals
-* **Centralized state storage** using LocalStorage
-* **No frameworks** to demonstrate strong Vanilla JavaScript fundamentals
-* Modular, readable code structure for easy future upgrades
+* Built **without frameworks** to demonstrate strong Vanilla JavaScript fundamentals
+* DOM updates are **localized** (no full re-renders during timer ticks)
+* Timer architecture designed to avoid UI jank and race conditions
+* Immediate-tick strategy for realistic stopwatch behavior
 
 ---
 
 ## 🛠️ Tech Stack
 
-| Technology           | Purpose                             |
-| -------------------- | ----------------------------------- |
-| HTML5                | Semantic structure                  |
-| CSS3                 | Styling, theming, animations        |
-| JavaScript (Vanilla) | App logic, timers, state management |
-| LocalStorage API     | Persistent data storage             |
-| GitHub Pages         | Deployment                          |
+| Technology         | Usage                                  |
+| ------------------ | -------------------------------------- |
+| HTML5              | Semantic structure                     |
+| CSS3               | Styling, animations, responsive layout |
+| Vanilla JavaScript | State, timers, analytics               |
+| LocalStorage API   | Persistent data                        |
+| GitHub Pages       | Deployment                             |
 
 ---
 
@@ -95,78 +83,59 @@ Each task is stored as an object with the following state:
 
 ```
 focusflow/
-├── index.html      # Main HTML file
-├── style.css       # Styling and theming
-├── app.js          # Application logic
-├── assets/
-│   └── icons/
+├── index.html   # App layout
+├── style.css    # Styling & animations
+├── app.js       # Application logic
 ├── README.md
-├── .gitignore
-└── LICENSE
+├── LICENSE
+└── .gitignore
 ```
 
 ---
 
 ## 🚀 Getting Started
 
-### Run Locally
+```bash
+git clone https://github.com/CODExGAMERZ/focusflow.git
+cd focusflow
+```
 
-1. Clone the repository
+Open `index.html` in your browser.
 
-   ```bash
-   git clone https://github.com/CODExGAMERZ/focusflow.git
-   ```
-
-2. Navigate to the project folder
-
-   ```bash
-   cd focusflow
-   ```
-
-3. Open the app
-
-   * Open `index.html` directly in your browser
-     *(No build tools or dependencies required)*
+No build tools or dependencies required.
 
 ---
 
 ## 🌍 Deployment
 
-This project is deployed using **GitHub Pages**.
+This project is deployed using **GitHub Pages**:
 
-Live URL:
-
-```
-https://codexgamerz.github.io/focusflow/
-```
+🔗 [https://codexgamerz.github.io/focusflow/](https://codexgamerz.github.io/focusflow/)
 
 ---
 
-## 💼 Resume Highlights
+## 💼 Resume / Interview Talking Points
 
-* Built a **feature-rich productivity web app** using Vanilla JavaScript
-* Designed and implemented **independent per-task countdown timers**
-* Managed complex UI and timer state with **LocalStorage persistence**
-* Created a **dark/light theming system** with saved user preferences
-* Focused on clean UX, modular code, and scalability
-* Deployed a live production app using **GitHub Pages**
+* Designed and implemented **independent per-task stopwatches** with precise timing
+* Solved real-world UI jank caused by full re-renders during intervals
+* Implemented **live productivity analytics** without external libraries
+* Optimized DOM updates for smooth animations
+* Debugged and resolved GitHub Pages caching and deployment issues
 
 ---
 
-## 🔮 Future Improvements
+## 🔮 Future Enhancements
 
-* 📊 Visual progress bars for each task timer
-* 🔔 Browser notifications on timer completion
-* 📱 Mobile-first responsive layout
-* ⚛️ React version with component-based architecture
-* ☁️ Cloud sync using Firebase
-* 📈 Productivity analytics (time spent per task)
+* Weekly / monthly analytics view
+* Export productivity data (CSV)
+* PWA support (offline + installable)
+* React version with identical behavior
 
 ---
 
 ## 📜 License
 
-This project is licensed under the **MIT License**.
+MIT License
 
 ---
 
@@ -177,4 +146,4 @@ GitHub: [https://github.com/CODExGAMERZ](https://github.com/CODExGAMERZ)
 
 ---
 
-⭐ If you found this project useful or interesting, consider starring the repository!
+⭐ If you like this project, consider starring the repository!
