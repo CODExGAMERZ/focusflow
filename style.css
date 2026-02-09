@@ -1,58 +1,61 @@
 /* =====================
-   CSS VARIABLES
+   THEME VARIABLES
 ===================== */
 :root {
   --bg: #0f172a;
   --card: #1e293b;
   --text: #e5e7eb;
+  --muted: #94a3b8;
   --accent: #38bdf8;
+  --danger: #f87171;
 }
 
 .light {
   --bg: #f8fafc;
   --card: #ffffff;
   --text: #020617;
+  --muted: #475569;
 }
 
 /* =====================
-   GLOBAL STYLES
+   GLOBAL
 ===================== */
 * {
   box-sizing: border-box;
-  margin: 0;
-  padding: 0;
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: Inter, system-ui, sans-serif;
 }
 
 body {
-  background-color: var(--bg);
+  background: var(--bg);
   color: var(--text);
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100vh;
+  transition: background 0.3s ease, color 0.3s ease;
 }
 
 /* =====================
-   APP CONTAINER
+   APP CARD
 ===================== */
 .app {
-  background-color: var(--card);
+  background: var(--card);
+  width: 380px;
   padding: 24px;
-  width: 360px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.35);
+  transition: background 0.3s ease;
 }
 
 h1 {
   text-align: center;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 }
 
 .tagline {
   text-align: center;
-  font-size: 0.9rem;
-  opacity: 0.8;
+  font-size: 0.85rem;
+  color: var(--muted);
   margin-bottom: 16px;
 }
 
@@ -61,13 +64,19 @@ h1 {
 ===================== */
 .theme-toggle {
   display: block;
-  margin: 10px auto 16px;
-  background: none;
+  margin: 0 auto 18px;
+  background: transparent;
   border: 1px solid var(--accent);
   color: var(--text);
-  padding: 6px 10px;
-  border-radius: 6px;
+  padding: 6px 12px;
+  border-radius: 999px;
   cursor: pointer;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.theme-toggle:hover {
+  background: rgba(56, 189, 248, 0.1);
+  transform: scale(1.05);
 }
 
 /* =====================
@@ -80,20 +89,19 @@ h1 {
 
 .task-input input {
   flex: 1;
-  padding: 10px;
-  border-radius: 6px;
+  padding: 10px 12px;
+  border-radius: 8px;
   border: none;
   outline: none;
 }
 
 .task-input button {
-  padding: 10px 14px;
-  border-radius: 6px;
+  background: var(--accent);
   border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
   cursor: pointer;
-  background-color: var(--accent);
-  color: #020617;
-  font-weight: bold;
+  font-weight: 600;
 }
 
 /* =====================
@@ -101,17 +109,20 @@ h1 {
 ===================== */
 ul {
   list-style: none;
-  margin-top: 20px;
+  margin-top: 18px;
+  max-height: 220px;
+  overflow-y: auto;
 }
 
 li {
-  background-color: rgba(255, 255, 255, 0.06);
-  padding: 10px;
-  border-radius: 6px;
+  background: rgba(255,255,255,0.05);
+  padding: 10px 12px;
+  border-radius: 10px;
   margin-bottom: 8px;
   display: flex;
   justify-content: space-between;
   align-items: center;
+  animation: fadeIn 0.25s ease;
 }
 
 li span {
@@ -120,25 +131,57 @@ li span {
 
 .completed {
   text-decoration: line-through;
-  opacity: 0.6;
+  color: var(--muted);
 }
 
 li button {
   background: none;
   border: none;
-  cursor: pointer;
   font-size: 16px;
+  cursor: pointer;
+  color: var(--danger);
 }
 
 /* =====================
    POMODORO
 ===================== */
 .pomodoro {
-  margin-top: 20px;
+  margin-top: 22px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(255,255,255,0.1);
   text-align: center;
 }
 
 #timer {
-  font-size: 2rem;
-  margin: 10px 0;
+  font-size: 2.4rem;
+  font-weight: 700;
+  margin: 8px 0;
+  transition: transform 0.2s ease;
+}
+
+.running {
+  transform: scale(1.08);
+}
+
+.pomodoro button {
+  background: var(--accent);
+  border: none;
+  padding: 8px 16px;
+  border-radius: 999px;
+  cursor: pointer;
+  font-weight: 600;
+}
+
+/* =====================
+   ANIMATIONS
+===================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }

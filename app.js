@@ -1,6 +1,6 @@
-// =====================
-// ELEMENTS
-// =====================
+/* =====================
+   DOM ELEMENTS
+===================== */
 const taskInput = document.getElementById("taskInput");
 const addTaskBtn = document.getElementById("addTaskBtn");
 const taskList = document.getElementById("taskList");
@@ -9,11 +9,14 @@ const themeToggle = document.getElementById("themeToggle");
 const timerDisplay = document.getElementById("timer");
 const startTimerBtn = document.getElementById("startTimer");
 
-// =====================
-// TASK LOGIC
-// =====================
+/* =====================
+   TASK STATE
+===================== */
 let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
+/* =====================
+   TASK FUNCTIONS
+===================== */
 function renderTasks() {
   taskList.innerHTML = "";
 
@@ -22,7 +25,10 @@ function renderTasks() {
 
     const span = document.createElement("span");
     span.textContent = task.text;
-    if (task.completed) span.classList.add("completed");
+
+    if (task.completed) {
+      span.classList.add("completed");
+    }
 
     span.addEventListener("click", () => {
       task.completed = !task.completed;
@@ -31,6 +37,8 @@ function renderTasks() {
 
     const deleteBtn = document.createElement("button");
     deleteBtn.textContent = "❌";
+    deleteBtn.title = "Delete task";
+
     deleteBtn.addEventListener("click", () => {
       tasks.splice(index, 1);
       saveTasks();
@@ -47,6 +55,9 @@ function saveTasks() {
   renderTasks();
 }
 
+/* =====================
+   ADD TASK
+===================== */
 addTaskBtn.addEventListener("click", () => {
   const text = taskInput.value.trim();
   if (!text) return;
@@ -56,11 +67,9 @@ addTaskBtn.addEventListener("click", () => {
   saveTasks();
 });
 
-renderTasks();
-
-// =====================
-// THEME LOGIC
-// =====================
+/* =====================
+   THEME (DARK / LIGHT)
+===================== */
 const savedTheme = localStorage.getItem("theme");
 if (savedTheme === "light") {
   document.body.classList.add("light");
@@ -74,9 +83,9 @@ themeToggle.addEventListener("click", () => {
   );
 });
 
-// =====================
-// POMODORO LOGIC
-// =====================
+/* =====================
+   POMODORO TIMER
+===================== */
 let time = 25 * 60;
 let interval = null;
 
@@ -89,6 +98,9 @@ function updateTimer() {
 startTimerBtn.addEventListener("click", () => {
   if (interval) return;
 
+  timerDisplay.classList.add("running");
+  startTimerBtn.textContent = "Focusing...";
+
   interval = setInterval(() => {
     time--;
     updateTimer();
@@ -96,11 +108,16 @@ startTimerBtn.addEventListener("click", () => {
     if (time === 0) {
       clearInterval(interval);
       interval = null;
+
       alert("Pomodoro complete! Take a break ☕");
+
       time = 25 * 60;
       updateTimer();
+      timerDisplay.classList.remove("running");
+      startTimerBtn.textContent = "Start Focus";
     }
   }, 1000);
 });
 
 updateTimer();
+renderTasks();
